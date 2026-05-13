@@ -53,8 +53,8 @@ function getThemeSnapshot(): Theme {
 function applyThemeFromStorage() {
   if (typeof window === "undefined") return;
   const stored = readStoredTheme();
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const next: Theme = stored ?? (prefersDark ? "dark" : "light");
+  /** First visit defaults to light; dark only after the user chooses it (persisted in localStorage). */
+  const next: Theme = stored ?? "light";
   document.documentElement.classList.toggle("dark", next === "dark");
   if (themeState === next) return;
   themeState = next;
