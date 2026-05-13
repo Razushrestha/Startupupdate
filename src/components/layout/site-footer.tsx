@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FooterVisitorCount } from "@/components/layout/footer-visitor-count";
-import { SITE } from "@/lib/site-config";
+import { SITE, SITE_LOGO_SRC } from "@/lib/site-config";
+import { SiteLogo } from "@/components/layout/site-logo";
 
 function getPublicSiteUrl() {
   const v = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -13,6 +14,7 @@ function FooterJsonLd({ siteUrl }: { siteUrl: string }) {
     "@type": "Organization",
     name: SITE.name,
     url: siteUrl,
+    logo: `${siteUrl}${SITE_LOGO_SRC}`,
     description: SITE.mission,
     slogan: SITE.tagline,
     areaServed: {
@@ -68,8 +70,9 @@ export function SiteFooter() {
 
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           <div className="sm:col-span-2 lg:col-span-4">
-            <Link href="/" className="inline-block font-semibold text-[var(--foreground)]">
-              {SITE.name}
+            <Link href="/" className="inline-flex items-center outline-offset-4">
+              <SiteLogo />
+              <span className="sr-only">{SITE.name}</span>
             </Link>
             <p className="mt-2 text-sm font-medium text-[var(--foreground)]">{SITE.tagline}</p>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--muted-foreground)]">
@@ -147,13 +150,8 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-[var(--border)] pt-8 text-sm text-[var(--muted-foreground)] sm:flex-row sm:items-center sm:justify-between">
-          <p>
-            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
-          </p>
-          <p className="max-w-xl text-xs leading-relaxed sm:text-right">
-            In production, set <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--foreground)]">NEXT_PUBLIC_SITE_URL</code> so structured data and link previews use your real domain.
-          </p>
+        <div className="mt-12 border-t border-[var(--border)] pt-8 text-sm text-[var(--muted-foreground)]">
+          <p>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</p>
         </div>
       </div>
     </footer>

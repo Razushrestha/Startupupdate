@@ -27,11 +27,17 @@ export default async function EditNewsPage({ params }: { params: Promise<{ id: s
   const body = Array.isArray(n.body) ? (n.body as string[]).join("\n\n") : "";
 
   return (
-    <div>
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-[var(--foreground)]">Edit article</h1>
-        <Link href="/admin/news" className="text-sm text-[var(--muted-foreground)] hover:underline">
-          ← Back
+    <div className="pb-8">
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[var(--border)] pb-8">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">News</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-[var(--foreground)]">Edit article</h1>
+        </div>
+        <Link
+          href="/admin/news"
+          className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2.5 text-sm font-medium text-[var(--foreground)] shadow-sm transition hover:bg-[var(--muted)]"
+        >
+          ← Back to news
         </Link>
       </div>
       <NewsEditorForm

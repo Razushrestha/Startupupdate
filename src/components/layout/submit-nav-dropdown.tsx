@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 
@@ -26,15 +25,14 @@ function ChevronDown({ className }: { className?: string }) {
 export function SubmitNavDropdown({
   className,
   align = "end",
+  compact = false,
 }: {
   className?: string;
-  /** Menu alignment under the button */
   align?: "center" | "end";
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
-  const active = pathname.startsWith("/submit");
   const menuId = useId();
 
   useEffect(() => {
@@ -63,13 +61,12 @@ export function SubmitNavDropdown({
         aria-controls={open ? `${menuId}-menu` : undefined}
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          "inline-flex items-center gap-1.5 border border-primary bg-primary px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--foreground)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-          active &&
-            "ring-1 ring-[var(--foreground)] ring-offset-2 ring-offset-[var(--background)]",
+          "inline-flex items-center gap-1 rounded-md bg-primary font-medium text-white hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+          compact ? "px-2.5 py-1.5 text-xs" : "px-3 py-2 text-sm",
         )}
       >
-        <span>Submit Startup</span>
-        <ChevronDown className={cn("h-4 w-4 shrink-0 transition-transform", open && "rotate-180")} />
+        <span>{compact ? "Submit" : "Submit Startup"}</span>
+        <ChevronDown className={cn("h-4 w-4 shrink-0", open && "rotate-180")} />
       </button>
 
       {open && (
@@ -78,14 +75,14 @@ export function SubmitNavDropdown({
           role="menu"
           aria-labelledby={`${menuId}-trigger`}
           className={cn(
-            "absolute top-full z-[60] mt-1 min-w-[15rem] border border-[var(--border)] bg-[var(--card)] py-1 shadow-md",
-            align === "end" ? "right-0" : "left-0",
+            "absolute top-full z-[60] mt-1 min-w-[14rem] rounded-md border border-[var(--border)] bg-[var(--card)] py-1 shadow-md",
+            align === "center" ? "left-1/2 -translate-x-1/2" : "right-0",
           )}
         >
           <Link
             role="menuitem"
             href="/submit"
-            className="block px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--muted)]"
+            className="block px-4 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--muted)]"
             onClick={() => setOpen(false)}
           >
             Submit Startup
@@ -93,7 +90,7 @@ export function SubmitNavDropdown({
           <Link
             role="menuitem"
             href="/submit/news"
-            className="block px-4 py-2.5 text-sm text-[var(--foreground)] hover:bg-[var(--muted)]"
+            className="block px-4 py-2 text-sm text-[var(--foreground)] hover:bg-[var(--muted)]"
             onClick={() => setOpen(false)}
           >
             Submit Startup News

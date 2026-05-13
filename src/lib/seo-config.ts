@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SITE } from "@/lib/site-config";
+import { SITE, SITE_LOGO_SRC } from "@/lib/site-config";
 import { absoluteUrl, getSiteUrl } from "@/lib/site-url";
 
 /** Rich default description for `<meta name="description">` and Open Graph. */
@@ -66,7 +66,7 @@ export function pageMetadata(input: PageSeoInput): Metadata {
       ? defaultOgImage.startsWith("http")
         ? defaultOgImage
         : absoluteUrl(defaultOgImage)
-      : undefined);
+      : absoluteUrl(SITE_LOGO_SRC));
 
   const openGraph = {
     title: ogTitle,
@@ -132,8 +132,11 @@ export function websiteJsonLd(): Record<string, unknown> {
     description: SITE.mission,
     slogan: SITE.tagline,
   };
-  if (process.env.NEXT_PUBLIC_ORG_LOGO?.trim()) {
-    org.logo = absoluteUrl(process.env.NEXT_PUBLIC_ORG_LOGO.trim());
+  const orgLogoEnv = process.env.NEXT_PUBLIC_ORG_LOGO?.trim();
+  if (orgLogoEnv) {
+    org.logo = orgLogoEnv.startsWith("http") ? orgLogoEnv : absoluteUrl(orgLogoEnv);
+  } else {
+    org.logo = absoluteUrl(SITE_LOGO_SRC);
   }
   if (defaultOgImage) {
     const img = defaultOgImage.startsWith("http") ? defaultOgImage : absoluteUrl(defaultOgImage);

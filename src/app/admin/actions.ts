@@ -250,7 +250,7 @@ const newsPayloadZ = z.object({
   trending: z.boolean(),
   coverImage: z.string().min(1),
   imageAlt: z.string().optional(),
-  body: z.string(),
+  body: z.string().trim().min(1, "Add at least one paragraph in the article body."),
 });
 
 function splitBody(text: string): string[] {

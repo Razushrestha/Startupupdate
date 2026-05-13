@@ -5,6 +5,9 @@ export const SITE = {
     "Every startup gets a voice. Every innovation gets visibility.",
 } as const;
 
+/** Path under `public/` (leading slash) for brand mark across header, footer, metadata, JSON-LD. */
+export const SITE_LOGO_SRC = "/assets/Startup.png" as const;
+
 export const NAV_DESKTOP = [
   { href: "/", label: "Home" },
   { href: "/startups", label: "Startups" },

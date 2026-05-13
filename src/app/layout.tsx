@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LocaleProvider } from "@/components/locale-provider";
 import { Shell } from "@/components/layout/shell";
 import { JsonLd } from "@/components/seo/json-ld";
-import { SITE } from "@/lib/site-config";
+import { SITE, SITE_LOGO_SRC } from "@/lib/site-config";
 import { GLOBAL_KEYWORDS, SITE_SEO_DESCRIPTION, websiteJsonLd } from "@/lib/seo-config";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -43,11 +43,13 @@ export const metadata: Metadata = {
     title: `${SITE.name}, ${SITE.tagline}`,
     description: SITE_SEO_DESCRIPTION,
     url: siteUrl,
+    images: [{ url: SITE_LOGO_SRC, alt: SITE.name }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SITE.name}: ${SITE.tagline}`,
     description: SITE_SEO_DESCRIPTION,
+    images: [SITE_LOGO_SRC],
   },
   robots: {
     index: true,
@@ -63,6 +65,11 @@ export const metadata: Metadata = {
   ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
     ? { verification: { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } }
     : {}),
+  icons: {
+    icon: SITE_LOGO_SRC,
+    shortcut: SITE_LOGO_SRC,
+    apple: SITE_LOGO_SRC,
+  },
 };
 
 export const viewport: Viewport = {

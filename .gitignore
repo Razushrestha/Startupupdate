@@ -32,9 +32,17 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
 # local visitor counter (dev)
 /data/site-visitors.json
+
+# Admin-uploaded news covers (keep folder via .gitkeep)
+/public/uploads/news/*
+!/public/uploads/news/.gitkeep
+
+/public/uploads/startups/*
+!/public/uploads/startups/.gitkeep

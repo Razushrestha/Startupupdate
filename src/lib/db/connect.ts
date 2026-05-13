@@ -18,6 +18,9 @@ export async function connectMongo(): Promise<typeof mongoose> {
     return globalWithMongo.__mongooseConn;
   }
 
-  globalWithMongo.__mongooseConn = mongoose.connect(uri);
+  globalWithMongo.__mongooseConn = mongoose.connect(uri, {
+    /** Fail fast instead of hanging when mongod isn’t running (local dev). */
+    serverSelectionTimeoutMS: 8_000,
+  });
   return globalWithMongo.__mongooseConn;
 }

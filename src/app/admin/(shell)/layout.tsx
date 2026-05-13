@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { isMongoConfigured } from "@/lib/db/connect";
 import { logoutAdmin } from "@/app/admin/actions";
+import { SiteLogo } from "@/components/layout/site-logo";
 
 export default function AdminShellLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[var(--background)]">
       <header className="border-b border-[var(--border)] bg-[var(--card)]">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+          <Link href="/admin" aria-label="Admin dashboard" className="shrink-0 pt-0.5">
+            <SiteLogo priority size="compact" />
+          </Link>
           <div className="flex flex-wrap items-center gap-6 text-sm font-medium">
             <Link href="/admin" className="text-[var(--foreground)]">
               Dashboard

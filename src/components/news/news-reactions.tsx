@@ -25,14 +25,12 @@ type StoredComment = { id: string; text: string; at: string };
 
 type ReactionPack = {
   l: boolean;
-  k: boolean;
   comments: StoredComment[];
   ready: boolean;
 };
 
 const EMPTY_PACK: ReactionPack = {
   l: false,
-  k: false,
   comments: [],
   ready: false,
 };
@@ -40,7 +38,6 @@ const EMPTY_PACK: ReactionPack = {
 function newPack(): ReactionPack {
   return {
     l: false,
-    k: false,
     comments: [],
     ready: false,
   };
@@ -96,14 +93,12 @@ function getReactionSnapshot(articleId: string): ReactionPack {
 function loadReactionsFromStorage(articleId: string) {
   const cur = ensurePack(articleId);
   let l = cur.l;
-  let k = cur.k;
   let comments = cur.comments;
   try {
     const raw = localStorage.getItem(STORAGE_PREFIX + articleId);
     if (raw) {
-      const p = JSON.parse(raw) as { l?: boolean; k?: boolean };
+      const p = JSON.parse(raw) as { l?: boolean };
       l = !!p.l;
-      k = !!p.k;
     }
   } catch {
     /* ignore */
@@ -117,22 +112,18 @@ function loadReactionsFromStorage(articleId: string) {
   } catch {
     /* ignore */
   }
-  reactionByArticle.set(articleId, { l, k, comments, ready: true });
+  reactionByArticle.set(articleId, { l, comments, ready: true });
   emitReaction(articleId);
 }
 
-function persistReactions(articleId: string, next: { l: boolean; k: boolean }) {
+function persistReactions(articleId: string, next: { l: boolean }) {
   const cur = ensurePack(articleId);
   reactionByArticle.set(articleId, {
     ...cur,
     l: next.l,
-    k: next.k,
   });
   try {
-    localStorage.setItem(
-      STORAGE_PREFIX + articleId,
-      JSON.stringify({ l: next.l, k: next.k }),
-    );
+    localStorage.setItem(STORAGE_PREFIX + articleId, JSON.stringify({ l: next.l }));
   } catch {
     /* ignore */
   }
@@ -175,7 +166,6 @@ export function NewsReactions({
   }, [articleId]);
 
   const loved = pack.l;
-  const liked = pack.k;
   const comments = pack.comments;
   const hydrated = pack.ready;
 
@@ -184,11 +174,10 @@ export function NewsReactions({
   const [draft, setDraft] = useState("");
 
   const baseLove = useMemo(() => hashCounts(articleId, "love", 120, 9800), [articleId]);
-  const baseLike = useMemo(() => hashCounts(articleId, "like", 340, 22_000), [articleId]);
   const baseComment = useMemo(() => hashCounts(articleId, "cmt", 12, 240), [articleId]);
 
   const persist = useCallback(
-    (next: { l: boolean; k: boolean }) => {
+    (next: { l: boolean }) => {
       persistReactions(articleId, next);
     },
     [articleId],
@@ -202,20 +191,15 @@ export function NewsReactions({
   );
 
   const loveCount = baseLove + (loved ? 1 : 0);
-  const likeCount = baseLike + (liked ? 1 : 0);
   const commentCount = baseComment + comments.length;
 
   const pulseLove = () => {
     const next = !loved;
-    persist({ l: next, k: liked });
+    persist({ l: next });
     if (next) {
       setAnnounce(uiT(locale, "thanksLove"));
       window.setTimeout(() => setAnnounce(""), 3800);
     }
-  };
-
-  const toggleLike = () => {
-    persist({ l: loved, k: !liked });
   };
 
   const share = async () => {
@@ -252,7 +236,7 @@ export function NewsReactions({
 
   const action = (active: boolean) =>
     cn(
-      "inline-flex items-center gap-2 border-0 bg-transparent p-0 text-left text-sm transition-colors group",
+      "inline-flex min-h-9 items-center gap-1 border-0 bg-transparent px-0 py-0.5 text-left text-xs transition-colors group sm:gap-1.5 sm:text-[13px]",
       "text-[var(--muted-foreground)] hover:text-[var(--foreground)]",
       active && "font-medium text-[var(--foreground)]",
     );
@@ -260,29 +244,22 @@ export function NewsReactions({
   return (
     <div className={cn(variant === "article" ? "space-y-4" : "mt-4 space-y-3")}>
       <div
-        className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[var(--border)] pt-3 text-sm"
+        className="flex w-full flex-wrap items-center gap-x-4 gap-y-1 border-t border-[var(--border)] pt-2.5 sm:gap-x-6 sm:pt-3"
         role="group"
         aria-label={uiT(locale, "shareStory")}
       >
-        <button type="button" onClick={pulseLove} aria-pressed={loved} className={action(loved)}>
+        <button type="button" onClick={pulseLove} aria-pressed={loved} className={cn(action(loved))}>
           <IconHeart className="shrink-0" filled={loved} />
           <span>{uiT(locale, "love")}</span>
           <span className="tabular-nums text-[var(--muted-foreground)]">
             {formatCount(hydrated ? loveCount : baseLove)}
           </span>
         </button>
-        <button type="button" onClick={toggleLike} aria-pressed={liked} className={action(liked)}>
-          <IconThumb className="shrink-0" up={liked} />
-          <span>{uiT(locale, "like")}</span>
-          <span className="tabular-nums text-[var(--muted-foreground)]">
-            {formatCount(hydrated ? likeCount : baseLike)}
-          </span>
-        </button>
         <button
           type="button"
           onClick={() => setCommentOpen((o) => !o)}
           aria-expanded={commentOpen}
-          className={action(commentOpen)}
+          className={cn(action(commentOpen))}
         >
           <IconComment className="shrink-0" active={commentOpen} />
           <span>{uiT(locale, "comment")}</span>
@@ -290,7 +267,7 @@ export function NewsReactions({
             {formatCount(hydrated ? commentCount : baseComment)}
           </span>
         </button>
-        <button type="button" onClick={share} className={action(false)}>
+        <button type="button" onClick={share} className={cn(action(false))}>
           <IconShare className="shrink-0" />
           {uiT(locale, "share")}
         </button>
@@ -356,7 +333,7 @@ function IconHeart({ className, filled }: { className?: string; filled?: boolean
     <svg
       viewBox="0 0 24 24"
       className={cn(
-        "h-[17px] w-[17px] shrink-0 text-current",
+        "h-[14px] w-[14px] shrink-0 text-current sm:h-[15px] sm:w-[15px]",
         filled && "text-rose-600 dark:text-rose-400",
         className,
       )}
@@ -372,29 +349,15 @@ function IconHeart({ className, filled }: { className?: string; filled?: boolean
   );
 }
 
-function IconThumb({ className, up }: { className?: string; up?: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={cn("h-[17px] w-[17px] shrink-0 text-current", !up && "opacity-80", up && "opacity-100", className)}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M7 10v12" />
-      <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
-    </svg>
-  );
-}
-
 function IconComment({ className, active }: { className?: string; active?: boolean }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className={cn("h-[17px] w-[17px] shrink-0 text-current", !active && "opacity-80", className)}
+      className={cn(
+        "h-[14px] w-[14px] shrink-0 text-current sm:h-[15px] sm:w-[15px]",
+        !active && "opacity-80",
+        className,
+      )}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"
@@ -411,7 +374,10 @@ function IconShare({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className={cn("h-[17px] w-[17px] shrink-0 text-current opacity-80 group-hover:opacity-100", className)}
+      className={cn(
+        "h-[14px] w-[14px] shrink-0 text-current opacity-80 group-hover:opacity-100 sm:h-[15px] sm:w-[15px]",
+        className,
+      )}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.75"
