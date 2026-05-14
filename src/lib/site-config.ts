@@ -12,7 +12,6 @@ export const NAV_DESKTOP = [
   { href: "/", label: "Home" },
   { href: "/startups", label: "Startups" },
   { href: "/news", label: "News" },
-  { href: "/funding", label: "Funding" },
   { href: "/insights", label: "Insights" },
 ] as const;
 
@@ -20,6 +19,6 @@ export const NAV_MOBILE = [
   { href: "/", label: "Home", icon: "home" as const },
   { href: "/news", label: "News", icon: "news" as const },
   { href: "/startups", label: "Startups", icon: "startups" as const },
-  { href: "/funding", label: "Funding", icon: "funding" as const },
+  { href: "/insights", label: "Insights", icon: "insights" as const },
   { href: "/profile", label: "Profile", icon: "profile" as const },
 ] as const;

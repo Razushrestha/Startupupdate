@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -7,6 +8,7 @@ import { Shell } from "@/components/layout/shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SITE, SITE_LOGO_SRC } from "@/lib/site-config";
 import { GLOBAL_KEYWORDS, SITE_SEO_DESCRIPTION, websiteJsonLd } from "@/lib/seo-config";
+import { adsenseScriptSrc } from "@/lib/ads-config";
 import { getSiteUrl } from "@/lib/site-url";
 
 const geistSans = Geist({
@@ -20,6 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = getSiteUrl();
+const adsenseSrc = adsenseScriptSrc();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -87,6 +90,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="min-h-full flex flex-col antialiased">
+        {adsenseSrc ? (
+          <Script
+            async
+            src={adsenseSrc}
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+          />
+        ) : null}
         <ThemeProvider>
           <LocaleProvider>
             <JsonLd data={websiteJsonLd()} />

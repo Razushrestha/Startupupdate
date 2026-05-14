@@ -6,9 +6,9 @@ const boxes = {
   /** Navbar — taller wordmark */
   featured:
     "relative inline-block h-12 w-[15.5rem] shrink-0 align-middle sm:h-[3.5rem] sm:w-[17rem]",
-  /** Header fallback (unused if featured used) */
+  /** Main site header — wide wordmark; height tuned for a compact nav bar */
   header:
-    "relative inline-block h-[3.25rem] w-[13rem] shrink-0 align-middle sm:h-14 sm:w-[15rem]",
+    "relative inline-block h-[4.75rem] w-[26rem] shrink-0 align-middle overflow-visible sm:h-22 sm:w-[30rem]",
   /** Footer */
   default: "relative inline-block h-11 w-[10.5rem] shrink-0 align-middle sm:h-12 sm:w-[11.75rem]",
   /** Admin */
@@ -31,7 +31,7 @@ export function SiteLogo({
     size === "featured"
       ? "(max-width: 640px) 248px, 272px"
       : size === "header"
-        ? "(max-width: 640px) 208px, 240px"
+        ? "(max-width: 640px) 304px, 352px"
         : size === "compact"
           ? "112px"
           : "(max-width: 640px) 168px, 188px";
