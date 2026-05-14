@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/cn";
 
 const SESSION_KEY = "su-v1-visit-recorded";
 
@@ -10,7 +11,11 @@ type ApiBody = {
   hint?: string;
 };
 
-export function FooterVisitorCount() {
+type FooterVisitorCountProps = {
+  className?: string;
+};
+
+export function FooterVisitorCount({ className }: FooterVisitorCountProps) {
   const [count, setCount] = useState<number | null>(null);
   const [pending, setPending] = useState(true);
   const [unconfigured, setUnconfigured] = useState(false);
@@ -52,23 +57,22 @@ export function FooterVisitorCount() {
   const display = pending ? "…" : count !== null ? count.toLocaleString() : "n/a";
 
   return (
-    <div
-      className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4"
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 text-xs text-[var(--muted-foreground)]",
+        className,
+      )}
       title={
         unconfigured
           ? "Add Upstash Redis env vars on your host to persist visits in production."
           : "Each browser session counts once toward total visits."
       }
     >
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--muted-foreground)]">
-        Site visits
-      </p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums text-[var(--foreground)]">{display}</p>
-      <p className="mt-2 text-xs leading-snug text-[var(--muted-foreground)]">
-        {unconfigured
-          ? "Configure visitor storage for live counts."
-          : "Approx. sessions, once per browser visit."}
-      </p>
-    </div>
+      <span className="h-1.5 w-1.5 rounded-full bg-primary/70" aria-hidden />
+      <span>
+        <span className="font-semibold tabular-nums text-[var(--foreground)]">{display}</span>{" "}
+        <span>visits</span>
+      </span>
+    </span>
   );
 }

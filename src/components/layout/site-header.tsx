@@ -11,7 +11,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteLogo } from "@/components/layout/site-logo";
 
 const SCROLL_EDGE = 56;
-/** px — ignore tiny deltas from touch bounce / subpixel jitter */
 const SCROLL_DOWN_DELTA = 10;
 const SCROLL_UP_DELTA = 6;
 
@@ -20,15 +19,29 @@ function navActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function SearchIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <circle cx="9" cy="9" r="6" />
+      <path d="m17 17-3.5-3.5" />
+    </svg>
+  );
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
   const searchActive = pathname === "/search" || pathname.startsWith("/search/");
   const [revealed, setRevealed] = useState(true);
   const lastY = useRef(0);
-
-  useEffect(() => {
-    setRevealed(true);
-  }, [pathname]);
 
   useEffect(() => {
     lastY.current = typeof window !== "undefined" ? window.scrollY : 0;
@@ -60,64 +73,64 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const navLinkBase =
+    "relative inline-flex items-center px-1 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)] rounded-sm";
+  const indicator =
+    "after:absolute after:inset-x-0 after:-bottom-1 after:h-0.5 after:rounded-full after:bg-primary after:content-['']";
+
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)] transition-[transform] duration-300 motion-safe:ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+        "sticky top-0 z-50 border-b border-[var(--border)]/80 bg-[var(--background)]/85 backdrop-blur supports-[backdrop-filter]:bg-[var(--background)]/70 transition-transform duration-300 motion-safe:ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
         revealed ? "translate-y-0" : "-translate-y-full pointer-events-none",
       )}
     >
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-x-8 gap-y-2 px-4 py-1.5 lg:flex-nowrap">
-        <div className="flex min-w-0 items-center gap-x-8">
-          <Link
-            href="/"
-            aria-label={SITE.name}
-            className="inline-block shrink-0 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
-          >
-            <SiteLogo decorative priority size="header" />
-          </Link>
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-6 px-4 py-2">
+        <Link
+          href="/"
+          aria-label={SITE.name}
+          className="inline-flex shrink-0 items-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]"
+        >
+          <SiteLogo decorative priority size="header" />
+        </Link>
 
-          <nav className="hidden shrink-0 items-center gap-8 lg:flex" aria-label="Primary">
-            {NAV_DESKTOP.map((item) => {
-              const active = navActive(pathname, item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium transition-[color,background-color,box-shadow]",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-                    active
-                      ? "bg-primary/15 font-semibold text-primary shadow-sm ring-1 ring-inset ring-primary/25 dark:bg-primary/20 dark:ring-primary/35"
-                      : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-            <SubmitNavDropdown align="end" />
-          </nav>
-        </div>
+        <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          {NAV_DESKTOP.map((item) => {
+            const active = navActive(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  navLinkBase,
+                  active
+                    ? cn("text-[var(--foreground)]", indicator)
+                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]",
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
 
-        <div className="flex shrink-0 items-center gap-3 text-sm">
-          <LanguageSwitcher />
-          <SubmitNavDropdown className="lg:hidden" align="end" compact />
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/search"
             aria-current={searchActive ? "page" : undefined}
+            aria-label="Search"
             className={cn(
-              "inline-flex items-center rounded-full px-3 py-1.5 font-medium transition-[color,background-color,box-shadow]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
-              searchActive
-                ? "bg-primary/15 font-semibold text-primary shadow-sm ring-1 ring-inset ring-primary/25 dark:bg-primary/20 dark:ring-primary/35"
-                : "text-[var(--muted-foreground)] hover:bg-[var(--muted)] hover:text-[var(--foreground)]",
+              "inline-flex h-9 w-9 items-center justify-center rounded-full text-[var(--muted-foreground)] transition-colors hover:bg-[var(--muted)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]",
+              searchActive && "bg-[var(--muted)] text-[var(--foreground)]",
             )}
           >
-            Search
+            <SearchIcon className="h-4 w-4" />
           </Link>
           <ThemeToggle />
+          <span className="hidden h-5 w-px bg-[var(--border)] sm:inline-block" aria-hidden />
+          <LanguageSwitcher />
+          <SubmitNavDropdown align="end" compact />
         </div>
       </div>
     </header>

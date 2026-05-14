@@ -9,10 +9,10 @@ export function MobileBottomNav() {
   const pathname = usePathname();
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)] bg-[var(--background)] pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border)]/80 bg-[var(--background)]/90 backdrop-blur supports-[backdrop-filter]:bg-[var(--background)]/75 pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Mobile primary"
     >
-      <ul className="mx-auto flex max-w-xl items-end justify-between gap-0 px-1 pt-1 sm:px-2">
+      <ul className="mx-auto flex max-w-xl items-stretch justify-between px-2">
         {NAV_MOBILE.map((item) => {
           const active =
             item.href === "/"
@@ -24,13 +24,20 @@ export function MobileBottomNav() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "block rounded-t-lg py-1.5 text-center text-[10px] font-semibold uppercase tracking-wide transition-[color,background-color,border-color] sm:py-2 sm:text-[11px]",
+                  "relative flex flex-col items-center justify-center gap-1 py-2 text-[11px] font-medium transition-colors",
                   active
-                    ? "border-t-2 border-primary bg-primary/10 text-primary dark:bg-primary/15"
-                    : "border-t-2 border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]",
+                    ? "text-primary"
+                    : "text-[var(--muted-foreground)] hover:text-[var(--foreground)]",
                 )}
               >
-                {item.label}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "h-1 w-1 rounded-full transition-opacity",
+                    active ? "bg-primary opacity-100" : "opacity-0",
+                  )}
+                />
+                <span>{item.label}</span>
               </Link>
             </li>
           );
