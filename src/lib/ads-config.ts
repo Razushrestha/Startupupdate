@@ -9,13 +9,18 @@ export const ADS_VARIANT_LABELS: Record<AdVariant, string> = {
 };
 
 /**
- * Set `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-…` in `.env.local` (never commit real publisher IDs to git).
- * No default in code — AdSense script and ads.txt load only when this is valid.
+ * Must match `public/ads.txt` (google.com, pub-… line). Override for staging/forks via
+ * `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID` in `.env.local` / host env.
  */
-export const ADSENSE_PUBLISHER_ID =
-  typeof process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID === "string"
-    ? process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID.trim()
-    : "";
+const FALLBACK_ADSENSE_PUBLISHER = "ca-pub-3440826594967276";
+
+export const ADSENSE_PUBLISHER_ID = (() => {
+  const raw =
+    typeof process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID === "string"
+      ? process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID.trim()
+      : "";
+  return (raw || FALLBACK_ADSENSE_PUBLISHER).trim();
+})();
 
 const defaultSlot = normalizeSlot(process.env.NEXT_PUBLIC_ADSENSE_SLOT_DEFAULT);
 

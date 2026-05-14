@@ -8,7 +8,7 @@ import { Shell } from "@/components/layout/shell";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SITE, SITE_LOGO_SRC } from "@/lib/site-config";
 import { GLOBAL_KEYWORDS, SITE_SEO_DESCRIPTION, websiteJsonLd } from "@/lib/seo-config";
-import { adsenseScriptSrc } from "@/lib/ads-config";
+import { adsenseScriptSrc, ADSENSE_PUBLISHER_ID } from "@/lib/ads-config";
 import { getSiteUrl } from "@/lib/site-url";
 
 const geistSans = Geist({
@@ -73,6 +73,9 @@ export const metadata: Metadata = {
     shortcut: SITE_LOGO_SRC,
     apple: SITE_LOGO_SRC,
   },
+  ...(ADSENSE_PUBLISHER_ID.startsWith("ca-pub-")
+    ? { other: { "google-adsense-account": ADSENSE_PUBLISHER_ID } }
+    : {}),
 };
 
 export const viewport: Viewport = {
@@ -92,9 +95,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col antialiased">
         {adsenseSrc ? (
           <Script
+            id="google-adsense-script"
             async
             src={adsenseSrc}
-            strategy="afterInteractive"
+            strategy="beforeInteractive"
             crossOrigin="anonymous"
           />
         ) : null}
