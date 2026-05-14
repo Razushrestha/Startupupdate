@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -92,16 +91,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full`}>
+      <head>
+        {/* Plain tag so crawlers (incl. AdSense verification) see `pagead2.googlesyndication` in initial HTML */}
+        {adsenseSrc ? <script async src={adsenseSrc} crossOrigin="anonymous" /> : null}
+      </head>
       <body className="min-h-full flex flex-col antialiased">
-        {adsenseSrc ? (
-          <Script
-            id="google-adsense-script"
-            async
-            src={adsenseSrc}
-            strategy="beforeInteractive"
-            crossOrigin="anonymous"
-          />
-        ) : null}
         <ThemeProvider>
           <LocaleProvider>
             <JsonLd data={websiteJsonLd()} />
