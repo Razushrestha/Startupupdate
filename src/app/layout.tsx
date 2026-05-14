@@ -72,9 +72,6 @@ export const metadata: Metadata = {
     shortcut: SITE_LOGO_SRC,
     apple: SITE_LOGO_SRC,
   },
-  ...(ADSENSE_PUBLISHER_ID.startsWith("ca-pub-")
-    ? { other: { "google-adsense-account": ADSENSE_PUBLISHER_ID } }
-    : {}),
 };
 
 export const viewport: Viewport = {
@@ -92,7 +89,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <head>
-        {/* Plain tag so crawlers (incl. AdSense verification) see `pagead2.googlesyndication` in initial HTML */}
+        {/* Meta tag verification — literal <head> output matches AdSense “Meta tag” method */}
+        {ADSENSE_PUBLISHER_ID.startsWith("ca-pub-") ? (
+          <meta name="google-adsense-account" content={ADSENSE_PUBLISHER_ID} />
+        ) : null}
+        {/* Script — plain tag so crawlers see pagead2.googlesyndication in initial HTML */}
         {adsenseSrc ? <script async src={adsenseSrc} crossOrigin="anonymous" /> : null}
       </head>
       <body className="min-h-full flex flex-col antialiased">
